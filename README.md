@@ -213,33 +213,33 @@ Cosine Similarity metric:
  the emergency room is for people who are very sick. if you are not sure if you
 
 
-### Part 6: Model Deployment(app1.py file)
+### Part 6.1: Model Deployment - Backend(app1.py file)
 
 1. Downlaod the fastapi, uvicorn and pydantic packeges into your project environment.
 
 2. Create app1.py file in your project directory.
 
-3. Import the relevant packeges.(app1.py file, lines:1-6)
+3. Import the relevant packeges.(app1.py file, lines:1-7)
 
-4. Create instance of fastapi(call it: app). (app1.py file, lines:9)
+4. Create instance of fastapi(call it: app). (app1.py file, lines:10)
 
-5. Define the paths for the base model and the fined-tuned model(where saved from the fine-tuning).(app1.py file, lines:12-13)
+5. Define the paths for the base model and the fined-tuned model(where saved from the fine-tuning).(app1.py file, lines:15-16)
 
-6. Configuration for quantizing the model to reduce its memory usage(using the BitsAndBytesConfig class).(app1.py file, lines:16-21)
+6. Configuration for quantizing the model to reduce its memory usage(using the BitsAndBytesConfig class).(app1.py file, lines:19-24)
 
-7. Load the base model (Meta-Llama-3.1-8B-Instruct) with the quantization configuration provided by bnb_config.(app1.py file, lines:24-27)
+7. Load the base model (Meta-Llama-3.1-8B-Instruct) with the quantization configuration provided by bnb_config.(app1.py file, lines:27-30)
 
-8. The model that is fine-tuned using the base model and the fine-tuned model directory.(app1.py file, lines:30)
+8. The model that is fine-tuned using the base model and the fine-tuned model directory.(app1.py file, lines:33)
 
-9. Load the Tokenizer - The tokenizer corresponding to the base model.(app1.py file, lines:33-35)
+9. Load the Tokenizer - The tokenizer corresponding to the base model.(app1.py file, lines:36-38)
   
-10. Initialize the Text Generation Pipeline - a pipeline for generating text using the fine-tuned model and tokenizer.(app1.py file, lines:38-43)
+10. Initialize the Text Generation Pipeline - a pipeline for generating text using the fine-tuned model and tokenizer.(app1.py file, lines:41-46)
   
-11. Request Body Definition - a data model for the input JSON object, which contains an instruction field of type str.(app1.py file, lines:46-47)
+11. Request Body Definition - a data model for the input JSON object, which contains an instruction field of type str.(app1.py file, lines:49-50)
 
-12. Generate Text Endpoint.(app1.py file, lines:50-67)
+12. Generate Text Endpoint.(app1.py file, lines:53-70)
 
-13. Health Check Endpoint - Checks if a GPU is available.(app1.py file, lines:70-73)
+13. Health Check Endpoint - Checks if a GPU is available.(app1.py file, lines:73-76)
 
 14. open the cmd:
     1. navigate to the directory that has the base model, project, environment, ...
@@ -254,7 +254,35 @@ Cosine Similarity metric:
     8. In the server response, you will get an output(answer from the fine-tuned model after 5 minutes). 
 
 
-   
+### Part 6.2: Model Deployment - Frontend(static folder: index.html + styles.css) 
+When the server is starting, we have to open the browser and type "http://localhost:8080/static/index.html" in the URL.
+1. Frontend Structure (HTML):
+    * HTML5 Structure: The code uses standard HTML5 with a DOCTYPE declaration.
+    * Linked CSS: The styles.css file is linked using the "link" tag to provide custom styles for the page.
+    * Textarea for Input: The user input is collected through a "textarea" element where users can type their questions.
+    * Button Action: A button triggers the chatbot response through the sendInstruction() function.
+    * Conversation History: A "div" section dynamically updates with the conversation history, showing both the user's questions and the chatbot's responses.
+    * Messages and Errors: A "Your question was sent!" message is shown when the user submits a question, and an error message section is included to handle issues like failed server requests.
+
+2. Dynamic Behavior (JavaScript):
+    * Fetching Response from Backend:
+        * When the user clicks the "Get Response" button, the sendInstruction() function is triggered.
+        * The function sends the user’s input to a FastAPI backend (/generate-text/ endpoint) using a POST request with fetch().
+        * The response from the server (chatbot’s answer) is received and dynamically added to the conversation history.
+    * Error Handling:
+        * If the server request fails or encounters an error, the error is captured and displayed in the error message section.
+
+3. User Feedback:
+    * Question Sent Message: After the user sends a question, a message saying "Your question was sent!" is displayed. Once the chatbot responds, this message disappears.
+
+4. Interaction Flow:
+    * 1st Step: User enters a question in the textarea.
+    * 2nd Step: User clicks "Get Response".
+    * 3rd Step: "Your question was sent!" message appears while waiting for the response.
+    * 4th Step: The conversation history updates with both the user’s input and the bot’s response.
+    
+5. Backend Communication:
+    * The /generate-text/ endpoint connects the frontend with the FastAPI server, where the chatbot model processes the user’s input and generates a response.
 
    
 

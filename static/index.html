@@ -1,0 +1,87 @@
+<!-- http://localhost:8080/static/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Interface</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <h2>Chatbot</h2>
+        <div class="chat-content">
+            <!-- Input Box and Button Section -->
+            <div class="input-container">
+                <label for="instruction">Enter your question:</label>
+                <textarea id="instruction" placeholder="Ask a question..."></textarea>
+                <button onclick="sendInstruction()">Get Response</button>
+
+                <!-- "Your question was sent" message -->
+                <div class="sent-message" id="sent-message" style="display: none; color: green; margin-top: 10px;">
+                    Your question was sent! please wait a moment for a response..
+                </div>
+
+                <!-- Error Message Container -->
+                <div class="error-message" id="error-message"></div>
+            </div>
+
+            <!-- Conversation History Section -->
+            <div class="response-container" id="response">
+                <strong>Conversation:</strong>
+                <div id="conversation-history"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function sendInstruction() {
+            const instruction = document.getElementById("instruction").value;
+            const conversationHistory = document.getElementById("conversation-history");
+            const errorElement = document.getElementById("error-message");
+            const sentMessageElement = document.getElementById("sent-message");
+
+            // Clear any previous error message
+            errorElement.innerText = "";
+
+            // Show the "Your question was sent!" message
+            sentMessageElement.style.display = "block";
+
+            try {
+                // Add the user's instruction to the conversation history
+                conversationHistory.innerHTML += `<p><strong>You:</strong> ${instruction}</p>`;
+
+                const response = await fetch("/generate-text/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ instruction: instruction })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // Add the bot's response to the conversation history
+                conversationHistory.innerHTML += `<p><strong>Bot:</strong> ${data.generated_text}</p>`;
+
+                // Clear the textarea after sending the message
+                document.getElementById("instruction").value = "";
+
+                // Hide the "Your question was sent!" message when the response is shown
+                sentMessageElement.style.display = "none";
+
+            } catch (error) {
+                errorElement.innerText = `Error: ${error.message}`;
+                // Hide the "Your question was sent!" message if there's an error
+                sentMessageElement.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
+

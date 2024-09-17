@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, pipeline
@@ -7,8 +8,10 @@ from torch.cuda import is_available as is_gpu_available
 
 # Initialize FastAPI app
 app = FastAPI()
+# Mount the static directory to serve static files(for the frontend part)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Load Model and Tokenizer
+# Paths to the base and fine-tuned models
 model_name = "C:\\codes\\llama31\\Meta-Llama-3.1-8B-Instruct"
 fine_tuned_model_dir = "C:\\codes\\llama31\\Meta-Llama-3.1-8B-Instruct\\final_project\\llama31-finetuned-model"
 
